@@ -16,9 +16,10 @@
 #define sqSize 60
 
 static char *pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-//static char *pos = "/k/4Bb/5Qq/2Nn/4Rr/K";
+//static char *pos = "//3B";
 
 static int piece_info = 0;
+static int pos_piece_info = -1;
 static int all_possible_moves[32] = { 0 };
 
 void show() {
@@ -28,6 +29,16 @@ void show() {
             printf("%d ", all_possible_moves[i]);
     }
     printf("\n+++++++++++++++++++++++\n");
+}
+
+void drawAllPossibleSquares() {
+    for(int i = 0; i < 32; i++) {
+        if(all_possible_moves[i] != -1) {
+            int rank = all_possible_moves[i] / 8;
+            int file = all_possible_moves[i] % 8;
+            DrawRectangle(file * sqSize, rank * sqSize, sqSize, sqSize, RED);
+        }
+    }
 }
 
 bool isMoveValid(int targetPos) {
@@ -41,11 +52,11 @@ bool isMoveValid(int targetPos) {
 
 void sortList() {
     for(int i = 0; i < 32; i++) {
-        for(int i = 0; i < 32; i++) {
-            if(all_possible_moves[i] > all_possible_moves[i + 1]) {
+        for(int j = 0; j < 32; j++) {
+            if(all_possible_moves[i] < all_possible_moves[j]) {
                 int temp = all_possible_moves[i];
-                all_possible_moves[i] = all_possible_moves[i + 1];
-                all_possible_moves[i + 1] = temp;
+                all_possible_moves[i] = all_possible_moves[j];
+                all_possible_moves[j] = temp;
             }
         }
     }
@@ -53,10 +64,8 @@ void sortList() {
 
 void removeDupFromList() {
     for(int i = 0; i < 32; i++) {
-        for(int i = 0; i < 32; i++) {
-            if(all_possible_moves[i] == all_possible_moves[i + 1]) {
-                all_possible_moves[i] = -1;
-            }
+        if(all_possible_moves[i] == all_possible_moves[i + 1]) {
+            all_possible_moves[i] = -1;
         }
     }
 }
@@ -263,7 +272,6 @@ int main(void) {
     int squareBoard[64] = { 0 };
 
     initChessBoard(squareBoard);
-
     updateChessBoard(
             squareBoard,
             white_pawn,
@@ -292,108 +300,130 @@ int main(void) {
         if(IsMouseButtonPressed(0)) {
             if(squareBoard[mouseOnBoard] != 0 && piece_info == 0) {
                 piece_info = squareBoard[mouseOnBoard];
+                pos_piece_info = mouseOnBoard;
                 squareBoard[mouseOnBoard] = 0;
 
                 switch (piece_info) {
 
                     case (White | Pawn):
                         validateWhitePawn(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (White | Rook):
                         validateRook(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (White | Bishop):
                         validateBishop(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (White | Knight):
                         validateKnight(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (White | Queen):
                         validateQueen(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (White | King):
                         validateKing(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (Black | Pawn):
                         validateBlackPawn(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (Black | Rook):
                         validateRook(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (Black | Bishop):
                         validateBishop(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (Black | Knight):
                         validateKnight(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (Black | Queen):
                         validateQueen(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                     case (Black | King):
                         validateKing(all_possible_moves, mouseY, mouseX);
-                        show();
                         break;
 
                 }
 
+                sortList();
+                removeDupFromList();
+                show();
+                drawAllPossibleSquares();
+
             } else {
 
-                squareBoard[mouseOnBoard] = 0;
-                updateChessBoard(
-                        squareBoard,
-                        white_pawn,
-                        white_knight,
-                        white_queen,
-                        white_king,
-                        white_bishop,
-                        white_rook,
-                        black_pawn,
-                        black_knight,
-                        black_queen,
-                        black_king,
-                        black_bishop,
-                        black_rook
-                        );
-                squareBoard[mouseOnBoard] = piece_info;
-                updateChessBoard(
-                        squareBoard,
-                        white_pawn,
-                        white_knight,
-                        white_queen,
-                        white_king,
-                        white_bishop,
-                        white_rook,
-                        black_pawn,
-                        black_knight,
-                        black_queen,
-                        black_king,
-                        black_bishop,
-                        black_rook
-                        );
+                if(isMoveValid(mouseOnBoard)) {
+
+                    squareBoard[mouseOnBoard] = 0;
+
+                    updateChessBoard(
+                            squareBoard,
+                            white_pawn,
+                            white_knight,
+                            white_queen,
+                            white_king,
+                            white_bishop,
+                            white_rook,
+                            black_pawn,
+                            black_knight,
+                            black_queen,
+                            black_king,
+                            black_bishop,
+                            black_rook
+                            );
+
+                    squareBoard[mouseOnBoard] = piece_info;
+
+                    updateChessBoard(
+                            squareBoard,
+                            white_pawn,
+                            white_knight,
+                            white_queen,
+                            white_king,
+                            white_bishop,
+                            white_rook,
+                            black_pawn,
+                            black_knight,
+                            black_queen,
+                            black_king,
+                            black_bishop,
+                            black_rook
+                            );
+
+                } else {
+
+                    squareBoard[pos_piece_info] = piece_info;
+
+                    updateChessBoard(
+                            squareBoard,
+                            white_pawn,
+                            white_knight,
+                            white_queen,
+                            white_king,
+                            white_bishop,
+                            white_rook,
+                            black_pawn,
+                            black_knight,
+                            black_queen,
+                            black_king,
+                            black_bishop,
+                            black_rook
+                            );
+
+                }
 
                 piece_info = 0;
+                pos_piece_info = -1;
 
             }
         }
