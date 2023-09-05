@@ -4,6 +4,8 @@
 #include <raylib.h>
 #include <stdlib.h>
 #include <string.h>
+#define RAYGUI_IMPLEMENTATION //Needed to import raygui
+#include "raygui.c"
 #include "rook.c"
 #include "bishop.c"
 #include "knight.c"
@@ -413,7 +415,7 @@ void updateChessBoard(
 int main(void) {
 
     SetTraceLogLevel(LOG_WARNING);
-    InitWindow(window_height, window_height, "CHESS BOARD");
+    InitWindow(window_width, window_height, "CHESS BOARD");
     SetTargetFPS(60);
 
     // ------------------- LOADING IMAGES -------------------
