@@ -11,8 +11,8 @@
 #include "king.c"
 #include "pawn.c"
 
-#define width 480
-#define height 480
+#define window_width 480 * 2
+#define window_height 480
 #define sqSize 60
 #define all_possible_moves_len 40
 
@@ -413,7 +413,7 @@ void updateChessBoard(
 int main(void) {
 
     SetTraceLogLevel(LOG_WARNING);
-    InitWindow(width, height, "CHESS BOARD");
+    InitWindow(window_height, window_height, "CHESS BOARD");
     SetTargetFPS(60);
 
     // ------------------- LOADING IMAGES -------------------
