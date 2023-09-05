@@ -11,12 +11,14 @@ NOW :
     [X] King
 [X] Track movements
 [X] Is move valid
-[ ] Fix highlighting squares
+[X] Fix highlighting squares
+[X] Double pawn move (White/Black)
+[ ] Check for pieces in between
+[ ] Check for check :)
 [ ] dance to timber
 
 LATER :
 
 [ ] En passant
 [ ] Castling (Long/Short)
-[ ] Check for check :)
 [ ] Checkmate
