@@ -10,8 +10,8 @@
 #include "queen.c"
 #include "king.c"
 
-#define width 480
-#define height 480
+#define window_width 480*2
+#define window_height 480
 #define sqSize 60
 
 //static char *pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
@@ -236,9 +236,9 @@ void updateChessBoard(
 }
 
 int main(void) {
-	
-	SetTraceLogLevel(LOG_WARNING);
-    InitWindow(width, height, "CHESS BOARD");
+
+    SetTraceLogLevel(LOG_WARNING);
+    InitWindow(window_width, window_height, "CHESS BOARD");
     SetTargetFPS(60);
 
     // ------------------- LOADING IMAGES -------------------
