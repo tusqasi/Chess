@@ -1491,7 +1491,7 @@ int GuiWindowBox(Rectangle bounds, const char *title)
     GuiSetStyle(BUTTON, BORDER_WIDTH, 1);
     GuiSetStyle(BUTTON, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
 #if defined(RAYGUI_NO_ICONS)
-    clicked = GuiButton(closeButtonRec, "x");
+    result = GuiButton(closeButtonRec, "x");
 #else
     result = GuiButton(closeButtonRec, GuiIconText(ICON_CROSS_SMALL, NULL));
 #endif
@@ -4174,7 +4174,7 @@ static void GuiLoadStyleFromMemory(const unsigned char *fileData, int dataSize)
                 if ((recsDataCompressedSize > 0) && (recsDataCompressedSize != recsDataSize))
                 {
                     // Recs data is compressed, uncompress it
-                    unsigned char *recsDataCompressed = RAYGUI_MALLOC(recsDataCompressedSize);
+                    unsigned char *recsDataCompressed = (unsigned char *)RAYGUI_MALLOC(recsDataCompressedSize);
 
                     memcpy(recsDataCompressed, fileDataPtr, recsDataCompressedSize);
                     fileDataPtr += recsDataCompressedSize;
@@ -4214,7 +4214,7 @@ static void GuiLoadStyleFromMemory(const unsigned char *fileData, int dataSize)
                 if ((glyphsDataCompressedSize > 0) && (glyphsDataCompressedSize != glyphsDataSize))
                 {
                     // Glyphs data is compressed, uncompress it
-                    unsigned char *glypsDataCompressed = RAYGUI_MALLOC(glyphsDataCompressedSize);
+                    unsigned char *glypsDataCompressed = (unsigned char *)RAYGUI_MALLOC(glyphsDataCompressedSize);
 
                     memcpy(glypsDataCompressed, fileDataPtr, glyphsDataCompressedSize);
                     fileDataPtr += glyphsDataCompressedSize;

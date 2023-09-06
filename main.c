@@ -4,8 +4,11 @@
 #include <raylib.h>
 #include <stdlib.h>
 #include <string.h>
-#define RAYGUI_IMPLEMENTATION //Needed to import raygui
-#include "raygui.c"
+
+#define RAYGUI_IMPLEMENTATION
+#include "./include/raygui.h"
+#include "./include/terminal.h"
+
 #include "rook.c"
 #include "bishop.c"
 #include "knight.c"
@@ -13,7 +16,9 @@
 #include "king.c"
 #include "pawn.c"
 
-#define window_width 480 * 2
+#define board_width 480 
+#define board_height 480
+#define window_width board_width * 2
 #define window_height 480
 #define sqSize 60
 #define all_possible_moves_len 40
@@ -261,7 +266,10 @@ void initChessBoard(int *squareBoard) {
 
     int file = 0;
     int rank = 0;
-
+	// make sure board is clear
+	for (int i=0; i<64; i++) {
+		squareBoard[i] = -1;	
+	}
     for(int i = 0; i < strlen(pos); i++) {
 
         char *c = &pos[i];
@@ -416,6 +424,9 @@ int main(void) {
 
     SetTraceLogLevel(LOG_WARNING);
     InitWindow(window_width, window_height, "CHESS BOARD");
+
+	GuiLoadStyleTerminal();
+
     SetTargetFPS(60);
 
     // ------------------- LOADING IMAGES -------------------
@@ -457,14 +468,40 @@ int main(void) {
 
 
     while(!WindowShouldClose()) {
-
         // ------------------- TRACKING MOUSE -------------------
 
         int mouseX = GetMouseX() / sqSize;
         int mouseY = GetMouseY() / sqSize;
         int mouseOnBoard = 8 * mouseY + mouseX;
 
-        if(IsMouseButtonPressed(0)) {
+		if(GetKeyPressed() == KEY_R 
+			|| GuiButton((Rectangle){board_width+10,10,100,30}, "RESET")
+		  ){
+// __AUTO_GENERATED_PRINTF_START__
+												printf("main#while#if Reseting 'r' key 1(%d): \n", __LINE__); // __AUTO_GENERATED_PRINTF_END__
+
+			initChessBoard(squareBoard);
+			updateChessBoard(
+					squareBoard,
+					white_pawn,
+					white_knight,
+					white_queen,
+					white_king,
+					white_bishop,
+					white_rook,
+					black_pawn,
+					black_knight,
+					black_queen,
+					black_king,
+					black_bishop,
+					black_rook
+			);
+		}
+        if(IsMouseButtonPressed(0) 
+			&& mouseX <=7
+			&& mouseY <=7 
+			&& mouseX >=0 
+			&& mouseY >= 0) {
             if(squareBoard[mouseOnBoard] != 0 && piece_info == 0) {
                 piece_info = squareBoard[mouseOnBoard];
                 pos_piece_info = mouseOnBoard;
@@ -708,7 +745,22 @@ int main(void) {
 
             }
         }
-
+	
+                    // updateChessBoard(
+                    //         squareBoard,
+                    //         white_pawn,
+                    //         white_knight,
+                    //         white_queen,
+                    //         white_king,
+                    //         white_bishop,
+                    //         white_rook,
+                    //         black_pawn,
+                    //         black_knight,
+                    //         black_queen,
+                    //         black_king,
+                    //         black_bishop,
+                    //         black_rook
+                    //         );
         BeginDrawing();
 
         EndDrawing();
