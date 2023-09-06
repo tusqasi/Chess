@@ -16,8 +16,9 @@
 #define sqSize 60
 
 
-//static char *pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-static char *pos = "r3k2r///////R3K2R"; // Castling
+// static char *pos = "R3K";
+static char *pos = "///////R2K3R"; // Castling
+int moved[6] = { 0 };
 
 enum piece { 
     None = 0, 
@@ -276,7 +277,13 @@ void updateChessBoard(
     }
 
 }
+bool castlingQueenSide(int clicked){
+	return clicked == 5 ;
+}
 
+bool castlingKingSide(int clicked){
+	return clicked == 1 ;
+}
 int main(void) {
 
     SetTraceLogLevel(LOG_WARNING);
@@ -320,7 +327,7 @@ int main(void) {
             black_rook
             );
 
-
+	int mouseLast = -1;
     while(!WindowShouldClose()) {
 
         // ------------------- TRACKING MOUSE -------------------
@@ -358,7 +365,8 @@ int main(void) {
                         break;
 
                     case (White | King):
-                        validateKing(all_possible_moves, mouseY, mouseX);
+                        validateKing(all_possible_moves, squareBoard, moved, mouseY, mouseX);
+						moved[0]++;
                         break;
 
                     case (Black | Pawn):
@@ -382,7 +390,8 @@ int main(void) {
                         break;
 
                     case (Black | King):
-                        validateKing(all_possible_moves, mouseY, mouseX);
+                        validateKing(all_possible_moves, squareBoard, moved, mouseY, mouseX);
+						moved[3]++;
                         break;
 
                 }
@@ -394,64 +403,8 @@ int main(void) {
                 drawAllPossibleSquares();
 
             } else {
-
-                if(isMoveValid(mouseOnBoard)) {
-
-                    squareBoard[mouseOnBoard] = 0;
-
-                    updateChessBoard(
-                            squareBoard,
-                            white_pawn,
-                            white_knight,
-                            white_queen,
-                            white_king,
-                            white_bishop,
-                            white_rook,
-                            black_pawn,
-                            black_knight,
-                            black_queen,
-                            black_king,
-                            black_bishop,
-                            black_rook
-                            );
-
-                    squareBoard[mouseOnBoard] = piece_info;
-
-                    updateChessBoard(
-                            squareBoard,
-                            white_pawn,
-                            white_knight,
-                            white_queen,
-                            white_king,
-                            white_bishop,
-                            white_rook,
-                            black_pawn,
-                            black_knight,
-                            black_queen,
-                            black_king,
-                            black_bishop,
-                            black_rook
-                            );
-
-                    fixHighlightedSquares();
-                    
-                    updateChessBoard(
-                            squareBoard,
-                            white_pawn,
-                            white_knight,
-                            white_queen,
-                            white_king,
-                            white_bishop,
-                            white_rook,
-                            black_pawn,
-                            black_knight,
-                            black_queen,
-                            black_king,
-                            black_bishop,
-                            black_rook
-                            );
-
-                } else {
+				
+                if(!isMoveValid(mouseOnBoard)) {
 
                     squareBoard[pos_piece_info] = piece_info;
 
@@ -472,11 +425,98 @@ int main(void) {
                             black_bishop,
                             black_rook
                             );
+				}
+				if(squareBoard[mouseLast] == (King | White)
+				&& castlingKingSide(mouseOnBoard) 
+				&& squareBoard[0] == (Rook | White)
+				){
+					squareBoard[1] = (King | White);
+					squareBoard[2] = (Rook | White);
+				updateChessBoard(
+						squareBoard,
+						white_pawn,
+						white_knight,
+						white_queen,
+						white_king,
+						white_bishop,
+						white_rook,
+						black_pawn,
+						black_knight,
+						black_queen,
+						black_king,
+						black_bishop,
+						black_rook
+						);
 
-                }
+				}
+				else if(squareBoard[mouseLast] == (King | White)
+				&& castlingQueenSide(mouseOnBoard) 
+				&& squareBoard[0] == (Rook | White)
+				){
+					squareBoard[5] = (King | White);
+					squareBoard[4] = (Rook | White);
+				}
+				else {
+					squareBoard[mouseOnBoard] = 0;
 
-                piece_info = 0;
-                pos_piece_info = -1;
+					updateChessBoard(
+							squareBoard,
+							white_pawn,
+							white_knight,
+							white_queen,
+							white_king,
+							white_bishop,
+							white_rook,
+							black_pawn,
+							black_knight,
+							black_queen,
+							black_king,
+							black_bishop,
+							black_rook
+							);
+
+					squareBoard[mouseOnBoard] = piece_info;
+
+					updateChessBoard(
+							squareBoard,
+							white_pawn,
+							white_knight,
+							white_queen,
+							white_king,
+							white_bishop,
+							white_rook,
+							black_pawn,
+							black_knight,
+							black_queen,
+							black_king,
+							black_bishop,
+							black_rook
+							);
+
+					fixHighlightedSquares();
+					
+					updateChessBoard(
+							squareBoard,
+							white_pawn,
+							white_knight,
+							white_queen,
+							white_king,
+							white_bishop,
+							white_rook,
+							black_pawn,
+							black_knight,
+							black_queen,
+							black_king,
+							black_bishop,
+							black_rook
+							);
+
+
+
+
+					piece_info = 0;
+					pos_piece_info = -1;
+				}
 
             }
         }
@@ -485,6 +525,7 @@ int main(void) {
 
         EndDrawing();
 
+		mouseLast = mouseOnBoard;
     }
 
     UnloadImage(black_king);
