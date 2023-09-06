@@ -26,6 +26,8 @@
 static char *pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 //static char *pos = "/ppp///3BQ//3pppp";
 
+bool drawNumber = false;
+
 enum piece { 
     None = 0, 
     King = 1, 
@@ -355,9 +357,13 @@ void updateChessBoard(
         Image black_bishop,
         Image black_rook
         ) {
-
+	ClearBackground(BLACK);
+	char buf[2];
     for(int file = 0; file < 8; file++) {
         for(int rank = 0; rank < 8; rank++) {
+            bool isLightSquared = (file + rank) % 2 != 0;
+            Color color = isLightSquared ? DARKPURPLE : WHITE;
+            DrawRectangle(file * sqSize, rank * sqSize, sqSize, sqSize, color);
 
             if(squareBoard[8 * rank + file] == None) {
                 if((rank + file) % 2 != 0) {
@@ -414,7 +420,10 @@ void updateChessBoard(
             if(squareBoard[8 * rank + file] == (Queen | Black)) {
                 DrawTexture(LoadTextureFromImage(black_queen), file * sqSize, rank * sqSize, RAYWHITE);
             }
-
+			if(drawNumber){
+				sprintf(buf, "%d", rank*8+file);	
+				DrawText(buf, file*sqSize, rank*sqSize, 19, GREEN);
+			}
         }
     }
 
@@ -466,16 +475,52 @@ int main(void) {
             black_rook
             );
 
-
+	int keyPressed ;
     while(!WindowShouldClose()) {
         // ------------------- TRACKING MOUSE -------------------
 
         int mouseX = GetMouseX() / sqSize;
         int mouseY = GetMouseY() / sqSize;
         int mouseOnBoard = 8 * mouseY + mouseX;
-
-		if(GetKeyPressed() == KEY_R 
-			|| GuiButton((Rectangle){board_width+10,10,100,30}, "RESET")
+		keyPressed = GetKeyPressed();	
+		
+		if(keyPressed == KEY_N){
+			drawNumber = !drawNumber;
+			updateChessBoard(
+					squareBoard,
+					white_pawn,
+					white_knight,
+					white_queen,
+					white_king,
+					white_bishop,
+					white_rook,
+					black_pawn,
+					black_knight,
+					black_queen,
+					black_king,
+					black_bishop,
+					black_rook
+			);
+		}
+if(GuiCheckBox((Rectangle){board_width+10,50,30,30}, "Draw Numbers", &drawNumber)){
+			updateChessBoard(
+					squareBoard,
+					white_pawn,
+					white_knight,
+					white_queen,
+					white_king,
+					white_bishop,
+					white_rook,
+					black_pawn,
+					black_knight,
+					black_queen,
+					black_king,
+					black_bishop,
+					black_rook
+			);
+		}
+		if(keyPressed == KEY_R 
+			|| GuiButton((Rectangle){board_width+10,10,120,30}, "RESET")
 		  ){
 // __AUTO_GENERATED_PRINTF_START__
 												printf("main#while#if Reseting 'r' key 1(%d): \n", __LINE__); // __AUTO_GENERATED_PRINTF_END__
