@@ -17,7 +17,7 @@
 
 
 // static char *pos = "R3K";
-static char *pos = "///////R2K3R"; // Castling
+static char *pos = "//////r/R2K3R"; // Castling
 int moved[6] = { 0 };
 
 enum piece { 
@@ -327,14 +327,16 @@ int main(void) {
             black_rook
             );
 
-	int mouseLast = -1;
+	int mouseLast    = -1,
+		mouseOnBoard = -1;
     while(!WindowShouldClose()) {
 
         // ------------------- TRACKING MOUSE -------------------
 
         int mouseX = GetMouseX() / sqSize;
         int mouseY = GetMouseY() / sqSize;
-        int mouseOnBoard = 8 * mouseY + mouseX;
+		mouseLast = mouseOnBoard;
+        mouseOnBoard = 8 * mouseY + mouseX;
 
         if(IsMouseButtonPressed(0)) {
             if(squareBoard[mouseOnBoard] != 0 && piece_info == 0) {
@@ -426,12 +428,29 @@ int main(void) {
                             black_rook
                             );
 				}
+				// __AUTO_GENERATED_PRINTF_START__
+				printf("last position: %d\ncurrent click: %d\n", mouseLast, mouseOnBoard); 
+				// __AUTO_GENERATED_PRINTF_END__
+				
+				/*
+				 * Castling condition
+				 * 1. No peice undergoing castle was moved
+				 * 2. King is not under attack and will not come under attack
+				 *
+				 * Castling logic
+				 * 1. Last clicked peice is a king 
+				 * 2. Current clicked position is valid castling move
+				 * 3. Move king and rook
+				 */
 				if(squareBoard[mouseLast] == (King | White)
 				&& castlingKingSide(mouseOnBoard) 
 				&& squareBoard[0] == (Rook | White)
 				){
-					squareBoard[1] = (King | White);
-					squareBoard[2] = (Rook | White);
+// __AUTO_GENERATED_PRINTF_START__
+																				printf("main#while#if#if#if casltingKingSide 1(%d): \n", __LINE__); // __AUTO_GENERATED_PRINTF_END__
+
+					squareBoard[1 + 8*7] = (King | White);
+					squareBoard[2 + 8*7] = (Rook | White);
 				updateChessBoard(
 						squareBoard,
 						white_pawn,
@@ -453,8 +472,11 @@ int main(void) {
 				&& castlingQueenSide(mouseOnBoard) 
 				&& squareBoard[0] == (Rook | White)
 				){
-					squareBoard[5] = (King | White);
-					squareBoard[4] = (Rook | White);
+// __AUTO_GENERATED_PRINTF_START__
+																				printf("main#while#if#if#if casltingKingSide 1(%d): \n", __LINE__); // __AUTO_GENERATED_PRINTF_END__
+
+					squareBoard[5 + 8*7] = (King | White);
+					squareBoard[4 + 8*7] = (Rook | White);
 				}
 				else {
 					squareBoard[mouseOnBoard] = 0;
@@ -524,8 +546,6 @@ int main(void) {
         BeginDrawing();
 
         EndDrawing();
-
-		mouseLast = mouseOnBoard;
     }
 
     UnloadImage(black_king);
