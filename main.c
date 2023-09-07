@@ -257,7 +257,7 @@ void removeDupFromList() {
 }
 
 void initChessBoard(int *squareBoard) {
-
+	printf("Loading FEN: %s\n",pos);
     for(int file = 0; file < 8; file++) {
         for(int rank = 0; rank < 8; rank++) {
             bool isLightSquared = (file + rank) % 2 != 0;
