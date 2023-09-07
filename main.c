@@ -28,6 +28,21 @@ static char *pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 
 bool drawNumber = false;
 
+struct _sprites {
+	Image white_pawn;
+	Image white_knight;
+	Image white_queen;
+	Image white_king;
+	Image white_bishop;
+	Image white_rook;
+	Image black_pawn;
+	Image black_knight;
+	Image black_queen;
+	Image black_king;
+	Image black_bishop;
+	Image black_rook;
+};
+
 enum piece { 
     None = 0, 
     King = 1, 
@@ -342,21 +357,23 @@ void initChessBoard(int *squareBoard) {
     }
 }
 
-void updateChessBoard(
-        int *squareBoard,
-        Image white_pawn,
-        Image white_knight,
-        Image white_queen,
-        Image white_king,
-        Image white_bishop,
-        Image white_rook,
-        Image black_pawn,
-        Image black_knight,
-        Image black_queen,
-        Image black_king,
-        Image black_bishop,
-        Image black_rook
-        ) {
+void updateChessBoard( 
+	int *squareBoard,
+	struct _sprites sprites
+) {
+	Image white_pawn = sprites.white_pawn; 
+	Image white_knight = sprites.white_knight; 
+	Image white_queen = sprites.white_queen; 
+	Image white_king = sprites.white_king; 
+	Image white_bishop = sprites.white_bishop; 
+	Image white_rook = sprites.white_rook; 
+	Image black_pawn = sprites.black_pawn; 
+	Image black_knight = sprites.black_knight; 
+	Image black_queen = sprites.black_queen; 
+	Image black_king = sprites.black_king; 
+	Image black_bishop = sprites.black_bishop; 
+	Image black_rook = sprites.black_rook; 
+
 	ClearBackground(BLACK);
 	char buf[2];
     for(int file = 0; file < 8; file++) {
@@ -439,41 +456,27 @@ int main(void) {
     SetTargetFPS(60);
 
     // ------------------- LOADING IMAGES -------------------
+	struct _sprites sprites;
+    sprites.black_king= LoadImage("./Chess Pieces/black_king.png");
+    sprites.black_pawn = LoadImage("./Chess Pieces/black_pawn.png");
+    sprites.black_knight = LoadImage("./Chess Pieces/black_knight.png");
+    sprites.black_bishop = LoadImage("./Chess Pieces/black_bishop.png");
+    sprites.black_rook = LoadImage("./Chess Pieces/black_rook.png");
+    sprites.black_queen = LoadImage("./Chess Pieces/black_queen.png");
 
-    Image black_king= LoadImage("./Chess Pieces/black_king.png");
-    Image black_pawn = LoadImage("./Chess Pieces/black_pawn.png");
-    Image black_knight = LoadImage("./Chess Pieces/black_knight.png");
-    Image black_bishop = LoadImage("./Chess Pieces/black_bishop.png");
-    Image black_rook = LoadImage("./Chess Pieces/black_rook.png");
-    Image black_queen = LoadImage("./Chess Pieces/black_queen.png");
-
-    Image white_king= LoadImage("./Chess Pieces/white_king.png");
-    Image white_pawn = LoadImage("./Chess Pieces/white_pawn.png");
-    Image white_knight = LoadImage("./Chess Pieces/white_knight.png");
-    Image white_bishop = LoadImage("./Chess Pieces/white_bishop.png");
-    Image white_rook = LoadImage("./Chess Pieces/white_rook.png");
-    Image white_queen = LoadImage("./Chess Pieces/white_queen.png");
+    sprites.white_king= LoadImage("./Chess Pieces/white_king.png");
+    sprites.white_pawn = LoadImage("./Chess Pieces/white_pawn.png");
+    sprites.white_knight = LoadImage("./Chess Pieces/white_knight.png");
+    sprites.white_bishop = LoadImage("./Chess Pieces/white_bishop.png");
+    sprites.white_rook = LoadImage("./Chess Pieces/white_rook.png");
+    sprites.white_queen = LoadImage("./Chess Pieces/white_queen.png");
 
     // ------------------- DRAWING BOARD -------------------
 
     int squareBoard[64] = { 0 };
 
     initChessBoard(squareBoard);
-    updateChessBoard(
-            squareBoard,
-            white_pawn,
-            white_knight,
-            white_queen,
-            white_king,
-            white_bishop,
-            white_rook,
-            black_pawn,
-            black_knight,
-            black_queen,
-            black_king,
-            black_bishop,
-            black_rook
-            );
+    updateChessBoard(squareBoard, sprites);
 
 	int keyPressed ;
     while(!WindowShouldClose()) {
@@ -486,58 +489,17 @@ int main(void) {
 		
 		if(keyPressed == KEY_N){
 			drawNumber = !drawNumber;
-			updateChessBoard(
-					squareBoard,
-					white_pawn,
-					white_knight,
-					white_queen,
-					white_king,
-					white_bishop,
-					white_rook,
-					black_pawn,
-					black_knight,
-					black_queen,
-					black_king,
-					black_bishop,
-					black_rook
-			);
+			updateChessBoard(squareBoard, sprites);
 		}
-if(GuiCheckBox((Rectangle){board_width+10,50,30,30}, "Draw Numbers", &drawNumber)){
-			updateChessBoard(
-					squareBoard,
-					white_pawn,
-					white_knight,
-					white_queen,
-					white_king,
-					white_bishop,
-					white_rook,
-					black_pawn,
-					black_knight,
-					black_queen,
-					black_king,
-					black_bishop,
-					black_rook
-			);
+		GuiCheckBox((Rectangle){board_width+10,50,30,30}, "Draw Numbers", &drawNumber);
+		if(drawNumber){
+			updateChessBoard(squareBoard, sprites);
 		}
 		if(keyPressed == KEY_R 
 			|| GuiButton((Rectangle){board_width+10,10,120,30}, "RESET")
 		  ){
 			initChessBoard(squareBoard);
-			updateChessBoard(
-					squareBoard,
-					white_pawn,
-					white_knight,
-					white_queen,
-					white_king,
-					white_bishop,
-					white_rook,
-					black_pawn,
-					black_knight,
-					black_queen,
-					black_king,
-					black_bishop,
-					black_rook
-			);
+			updateChessBoard(squareBoard, sprites);
 		}
         if(IsMouseButtonPressed(0) 
 			&& mouseX <=7
@@ -614,8 +576,8 @@ if(GuiCheckBox((Rectangle){board_width+10,50,30,30}, "Draw Numbers", &drawNumber
 
                     bool canGoThrought = false;
 
+                    updateChessBoard(squareBoard, sprites);
                     switch (piece_info) {
-
                         case (White | Rook):
                             if(straightPiecesValidMoveCheck(mouseOnBoard, squareBoard) == true) {
                                 canGoThrought = true;
@@ -682,57 +644,15 @@ if(GuiCheckBox((Rectangle){board_width+10,50,30,30}, "Draw Numbers", &drawNumber
 
                         squareBoard[mouseOnBoard] = 0;
 
-                        updateChessBoard(
-                                squareBoard,
-                                white_pawn,
-                                white_knight,
-                                white_queen,
-                                white_king,
-                                white_bishop,
-                                white_rook,
-                                black_pawn,
-                                black_knight,
-                                black_queen,
-                                black_king,
-                                black_bishop,
-                                black_rook
-                                );
+                        updateChessBoard(squareBoard, sprites);
 
                         squareBoard[mouseOnBoard] = piece_info;
 
-                        updateChessBoard(
-                                squareBoard,
-                                white_pawn,
-                                white_knight,
-                                white_queen,
-                                white_king,
-                                white_bishop,
-                                white_rook,
-                                black_pawn,
-                                black_knight,
-                                black_queen,
-                                black_king,
-                                black_bishop,
-                                black_rook
-                                );
+                        updateChessBoard(squareBoard, sprites);
 
                         fixHighlightedSquares();
 
-                        updateChessBoard(
-                                squareBoard,
-                                white_pawn,
-                                white_knight,
-                                white_queen,
-                                white_king,
-                                white_bishop,
-                                white_rook,
-                                black_pawn,
-                                black_knight,
-                                black_queen,
-                                black_king,
-                                black_bishop,
-                                black_rook
-                                );
+                        updateChessBoard(squareBoard, sprites);
 
                     } else {
 
@@ -740,21 +660,11 @@ if(GuiCheckBox((Rectangle){board_width+10,50,30,30}, "Draw Numbers", &drawNumber
 
                     fixHighlightedSquares();
 
-                    updateChessBoard(
-                            squareBoard,
-                            white_pawn,
-                            white_knight,
-                            white_queen,
-                            white_king,
-                            white_bishop,
-                            white_rook,
-                            black_pawn,
-                            black_knight,
-                            black_queen,
-                            black_king,
-                            black_bishop,
-                            black_rook
-                            );
+                    updateChessBoard(squareBoard, sprites);
+
+                    fixHighlightedSquares();
+                    
+                    updateChessBoard(squareBoard, sprites);
 
                     }
 
@@ -764,21 +674,7 @@ if(GuiCheckBox((Rectangle){board_width+10,50,30,30}, "Draw Numbers", &drawNumber
 
                     fixHighlightedSquares();
 
-                    updateChessBoard(
-                            squareBoard,
-                            white_pawn,
-                            white_knight,
-                            white_queen,
-                            white_king,
-                            white_bishop,
-                            white_rook,
-                            black_pawn,
-                            black_knight,
-                            black_queen,
-                            black_king,
-                            black_bishop,
-                            black_rook
-                            );
+                    updateChessBoard(squareBoard, sprites);
 
                 }
 
@@ -788,40 +684,26 @@ if(GuiCheckBox((Rectangle){board_width+10,50,30,30}, "Draw Numbers", &drawNumber
             }
         }
 	
-                    // updateChessBoard(
-                    //         squareBoard,
-                    //         white_pawn,
-                    //         white_knight,
-                    //         white_queen,
-                    //         white_king,
-                    //         white_bishop,
-                    //         white_rook,
-                    //         black_pawn,
-                    //         black_knight,
-                    //         black_queen,
-                    //         black_king,
-                    //         black_bishop,
-                    //         black_rook
-                    //         );
         BeginDrawing();
 
         EndDrawing();
 
     }
+	
+	printf("Closing...\n");
+    UnloadImage(sprites.black_king);
+    UnloadImage(sprites.black_pawn);
+    UnloadImage(sprites.black_rook);
+    UnloadImage(sprites.black_bishop);
+    UnloadImage(sprites.black_knight);
+    UnloadImage(sprites.black_queen);
 
-    UnloadImage(black_king);
-    UnloadImage(black_pawn);
-    UnloadImage(black_rook);
-    UnloadImage(black_bishop);
-    UnloadImage(black_knight);
-    UnloadImage(black_queen);
-
-    UnloadImage(white_king);
-    UnloadImage(white_pawn);
-    UnloadImage(white_rook);
-    UnloadImage(white_bishop);
-    UnloadImage(white_knight);
-    UnloadImage(white_queen);
+    UnloadImage(sprites.white_king);
+    UnloadImage(sprites.white_pawn);
+    UnloadImage(sprites.white_rook);
+    UnloadImage(sprites.white_bishop);
+    UnloadImage(sprites.white_knight);
+    UnloadImage(sprites.white_queen);
 
     CloseWindow();
 
