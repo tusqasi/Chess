@@ -522,9 +522,6 @@ if(GuiCheckBox((Rectangle){board_width+10,50,30,30}, "Draw Numbers", &drawNumber
 		if(keyPressed == KEY_R 
 			|| GuiButton((Rectangle){board_width+10,10,120,30}, "RESET")
 		  ){
-// __AUTO_GENERATED_PRINTF_START__
-												printf("main#while#if Reseting 'r' key 1(%d): \n", __LINE__); // __AUTO_GENERATED_PRINTF_END__
-
 			initChessBoard(squareBoard);
 			updateChessBoard(
 					squareBoard,
