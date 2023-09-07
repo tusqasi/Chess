@@ -361,6 +361,7 @@ void updateChessBoard(
 	int *squareBoard,
 	struct _sprites sprites
 ) {
+	ClearBackground(BLACK);
 	Image white_pawn = sprites.white_pawn; 
 	Image white_knight = sprites.white_knight; 
 	Image white_queen = sprites.white_queen; 
@@ -446,6 +447,26 @@ void updateChessBoard(
 
 }
 
+char * piece_name(int p){
+	switch (p) {
+		case(None   |White):return "Selected: White None";
+		case(King   |White):return "Selected: White King";
+		case(Pawn   |White):return "Selected: White Pawn";
+		case(Knight |White):return "Selected: White Knight";
+		case(Bishop |White):return "Selected: White Bishop";
+		case(Rook   |White):return "Selected: White Rook";
+		case(Queen  |White):return "Selected: White Queen";
+		case(None   |Black):return "Selected: Black None";
+		case(King   |Black):return "Selected: Black King";
+		case(Pawn   |Black):return "Selected: Black Pawn";
+		case(Knight |Black):return "Selected: Black Knight";
+		case(Bishop |Black):return "Selected: Black Bishop";
+		case(Rook   |Black):return "Selected: Black Rook";
+		case(Queen  |Black):return "Selected: Black Queen";
+		default            :return "Not Selected";
+	}
+}
+
 int main(void) {
 
     SetTraceLogLevel(LOG_WARNING);
@@ -510,7 +531,7 @@ int main(void) {
                 piece_info = squareBoard[mouseOnBoard];
                 pos_piece_info = mouseOnBoard;
                 squareBoard[mouseOnBoard] = 0;
-
+				DrawText(piece_name(piece_info),board_width+10,90,20,GREEN);
                 switch (piece_info) {
 
                     case (White | Pawn):
@@ -662,28 +683,21 @@ int main(void) {
 
                     updateChessBoard(squareBoard, sprites);
 
-                    fixHighlightedSquares();
-                    
-                    updateChessBoard(squareBoard, sprites);
-
                     }
 
                 } else {
 
                     squareBoard[pos_piece_info] = piece_info;
-
+                }
                     fixHighlightedSquares();
 
                     updateChessBoard(squareBoard, sprites);
-
-                }
 
                 piece_info = 0;
                 pos_piece_info = -1;
 
             }
         }
-	
         BeginDrawing();
 
         EndDrawing();
